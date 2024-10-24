@@ -40,13 +40,14 @@ public class Usuario implements Serializable, UserDetails {
 	private Long id;
 	@Column(nullable = false, length = 100)
 	private String nome;
-	@Column(length = 100)
+	@Column(length = 100, nullable = false)
 	private String email;
-	@Column(length = 128)
+	@Column(length = 128, nullable = false)
 	private String senha;
 	@Column(length = 100)
 	private String telefone;
 	@Enumerated(EnumType.ORDINAL)
+	@Column(nullable = false)
 	private RolesEnum role;
 	
 	@Override

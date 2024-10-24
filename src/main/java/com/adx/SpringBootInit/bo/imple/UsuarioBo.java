@@ -42,7 +42,7 @@ public class UsuarioBo implements IUsuarioBo{
 	}
 
 	@Override
-	public Usuario edit(UsuarioDto usuario) throws SenhaIncorretaException {
+	public Usuario update(UsuarioDto usuario) throws SenhaIncorretaException {
 		Usuario usu = dao.findByEmail(usuario.getEmail());
 		if(usu != null && usu.getSenha().equalsIgnoreCase(encoder.encode(usuario.getSenha()))) {
 			usu = Usuario.builder().build();
@@ -63,9 +63,23 @@ public class UsuarioBo implements IUsuarioBo{
 	}
 
 	@Override
-	public Usuario load(Long id) {
+	public Usuario load(Long id) throws UsuarioNotFound {
+		Optional<Usuario> usu = dao.findById(id);
+		if(usu.isEmpty()) {
+			throw new UsuarioNotFound();
+		}
+		return usu.get();
+	}
+
+	@Override
+	public Usuario create(Usuario entity) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public Usuario edit(Usuario entity) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
