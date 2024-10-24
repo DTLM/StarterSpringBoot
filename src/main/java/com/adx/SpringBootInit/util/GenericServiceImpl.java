@@ -9,8 +9,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 
 @Repository
-@AllArgsConstructor
-public class GenericServiceImple<T> implements GenericService<T>{
+public class GenericServiceImpl<T> implements GenericService<T>{
 
 	@PersistenceContext
 	private EntityManager dao;
@@ -25,7 +24,12 @@ public class GenericServiceImple<T> implements GenericService<T>{
 
 	@Override
 	public T load(Long id) throws Exception {
-		return dao.find(classe, id);
+		T obj = dao.find(classe, id);
+		if(obj != null) {
+			return obj;
+		} else {
+			throw new NotFoundException("Objeto da classe: "+ classe.getName() +" não encontrado.");
+		}
 	}
 
 	@Override

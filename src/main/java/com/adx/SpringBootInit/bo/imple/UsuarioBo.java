@@ -1,7 +1,5 @@
 package com.adx.SpringBootInit.bo.imple;
 
-import java.util.Optional;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -9,15 +7,15 @@ import com.adx.SpringBootInit.bo.IUsuarioBo;
 import com.adx.SpringBootInit.dao.IUsuarioDao;
 import com.adx.SpringBootInit.exception.SenhaIncorretaException;
 import com.adx.SpringBootInit.exception.UsuarioExistsException;
-import com.adx.SpringBootInit.exception.UsuarioNotFound;
 import com.adx.SpringBootInit.modal.Usuario;
 import com.adx.SpringBootInit.modal.dto.UsuarioDto;
+import com.adx.SpringBootInit.util.GenericServiceImpl;
 
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class UsuarioBo implements IUsuarioBo{
+public class UsuarioBo extends GenericServiceImpl<Usuario> implements IUsuarioBo{
 	
 	private IUsuarioDao dao;
 	
@@ -52,34 +50,4 @@ public class UsuarioBo implements IUsuarioBo{
 		return usu;
 	}
 
-	@Override
-	public void deletar(Long id) throws UsuarioNotFound {
-		Optional<Usuario> usu = dao.findById(id);
-		if(usu.isPresent()) {
-			dao.deleteById(id);
-		} else {
-			throw new UsuarioNotFound();
-		}
-	}
-
-	@Override
-	public Usuario load(Long id) throws UsuarioNotFound {
-		Optional<Usuario> usu = dao.findById(id);
-		if(usu.isEmpty()) {
-			throw new UsuarioNotFound();
-		}
-		return usu.get();
-	}
-
-	@Override
-	public Usuario create(Usuario entity) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Usuario edit(Usuario entity) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
