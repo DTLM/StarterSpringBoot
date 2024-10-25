@@ -18,8 +18,7 @@ public class GenericServiceImpl<T> implements GenericService<T>{
 	
 	@Override
 	public T create(T entity) throws Exception {
-		dao.persist(entity);
-		return entity;
+		return dao.merge(entity);
 	}
 
 	@Override

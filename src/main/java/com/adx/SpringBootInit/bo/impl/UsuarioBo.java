@@ -1,5 +1,6 @@
-package com.adx.SpringBootInit.bo.imple;
+package com.adx.SpringBootInit.bo.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,15 +12,18 @@ import com.adx.SpringBootInit.modal.Usuario;
 import com.adx.SpringBootInit.modal.dto.UsuarioDto;
 import com.adx.SpringBootInit.util.GenericServiceImpl;
 
-import lombok.AllArgsConstructor;
-
 @Service
-@AllArgsConstructor
 public class UsuarioBo extends GenericServiceImpl<Usuario> implements IUsuarioBo{
 	
 	private IUsuarioDao dao;
 	
 	private final BCryptPasswordEncoder encoder;
+	
+	@Autowired
+	public UsuarioBo(BCryptPasswordEncoder encoder, IUsuarioDao dao) {
+		this.dao = dao;
+		this.encoder = encoder;
+	}
 
 	@Override
 	public Usuario create(UsuarioDto usuario) throws UsuarioExistsException {
