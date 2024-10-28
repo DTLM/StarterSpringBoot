@@ -8,6 +8,7 @@ import com.adx.SpringBootInit.bo.IUsuarioBo;
 import com.adx.SpringBootInit.dao.IUsuarioDao;
 import com.adx.SpringBootInit.exception.SenhaIncorretaException;
 import com.adx.SpringBootInit.exception.UsuarioExistsException;
+import com.adx.SpringBootInit.exception.UsuarioNotFound;
 import com.adx.SpringBootInit.modal.Usuario;
 import com.adx.SpringBootInit.modal.dto.UsuarioDto;
 import com.adx.SpringBootInit.util.GenericServiceImpl;
@@ -44,10 +45,23 @@ public class UsuarioBo extends GenericServiceImpl<Usuario> implements IUsuarioBo
 	}
 
 	@Override
-	public Usuario update(UsuarioDto usuario) throws SenhaIncorretaException {
-		Usuario usu = dao.findByEmail(usuario.getEmail());
-		if(usu != null && usu.getSenha().equalsIgnoreCase(encoder.encode(usuario.getSenha()))) {
-			usu = Usuario.builder().build();
+	public Usuario update(UsuarioDto usuario) throws SenhaIncorretaException, UsuarioNotFound {
+		Usuario usu = dao.findById(usuario.getId()).orElseThrow(UsuarioNotFound::new);
+		if(usu.getSenha().equalsIgnoreCase(encoder.encode(usuario.getSenha()))) {
+			if(!usuario.getNome().isBlank()) {
+				usu.setNome(usuario.getNome());
+			}
+			if(!usuario.getSenhaNova().isBlank()) {
+				usu.setSenha(encoder.encode(usuario.getSenhaNova()));
+			}
+			if(usuario.getRole() != null) {
+				usu.setRole(usuario.getRole());
+			}
+			if(!usuario.getTelefone().isBlank()) {
+				usu.setTelefone(usuario.getTelefone());
+			}
+			usu.setEmail(usuario.getEmail());
+			usu = dao.save(usu);
 		} else {
 			throw new SenhaIncorretaException();
 		}

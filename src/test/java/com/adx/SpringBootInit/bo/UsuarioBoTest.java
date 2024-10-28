@@ -9,10 +9,15 @@ import static org.junit.jupiter.api.Assumptions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
@@ -25,7 +30,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.adx.SpringBootInit.bo.impl.UsuarioBo;
 import com.adx.SpringBootInit.dao.IUsuarioDao;
 import com.adx.SpringBootInit.enuns.RolesEnum;
+import com.adx.SpringBootInit.exception.NotFoundException;
+import com.adx.SpringBootInit.exception.SenhaIncorretaException;
 import com.adx.SpringBootInit.exception.UsuarioExistsException;
+import com.adx.SpringBootInit.exception.UsuarioNotFound;
 import com.adx.SpringBootInit.modal.Usuario;
 import com.adx.SpringBootInit.modal.dto.UsuarioDto;
 
@@ -33,6 +41,7 @@ import com.adx.SpringBootInit.modal.dto.UsuarioDto;
 @SpringBootTest
 @TestInstance(Lifecycle.PER_CLASS)
 @ActiveProfiles(value = "teste")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UsuarioBoTest {
 	
 	@SpyBean
@@ -51,22 +60,20 @@ class UsuarioBoTest {
 	}
 	
 	@Test
-	public void createUser() {
+	@Order(1)
+	void createUser() throws UsuarioExistsException {
 		Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(null);
 		Mockito.when(dao.save(Mockito.any())).thenReturn(user);
-		Usuario novo = null;
-		try {
-			novo = bo.create(userDto);
-		} catch (UsuarioExistsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		Usuario novo = bo.create(userDto);
+		
 		verify(dao,times(1)).findByEmail(Mockito.anyString());
 		assertTrue(new ReflectionEquals(user).matches(novo));
 	}
 	
 	@Test
-	public void createEmailDuplicadoException() {
+	@Order(2)
+	void createEmailDuplicadoException() {
 		Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(user);
 		assertThrows(UsuarioExistsException.class, () -> {
 			bo.create(userDto);
@@ -78,42 +85,54 @@ class UsuarioBoTest {
 	}
 	
 	@Test
-	public void createNaoLancaExcecao() {
+	@Order(3)
+	void createNaoLancaExcecao() {
 		assertDoesNotThrow(() -> bo.create(userDto));
 	}
 	
 	@Test
-	public void editar() {
+	void editar() {
 		fail("ainda não implementado.");
 	}
 	
 	@Test
-	public void editarSenhaIncorreta() {
-		fail("ainda não implementado.");
+	void editarSenhaIncorreta() {
+		userDto.setSenha("4567");
+		Mockito.when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(user));
+		assertThrows(SenhaIncorretaException.class, () ->{
+			bo.update(userDto);
+		});
 	}
 	
 	@Test
-	public void editarClienteNaoExiste() {
-		fail("ainda não implementado.");
+	void editarClienteNaoExiste() {
+		Mockito.when(dao.findById(Mockito.anyLong())).thenReturn(null);
+		assertThrows(UsuarioNotFound.class, () ->{
+			bo.update(userDto);
+		});
 	}
 	
-	@Test
-	public void deletar() {
-		fail("ainda não implementado.");
-	}
-	
-	@Test
-	public void deletarClienteNaoExiste() {
-		fail("ainda não implementado.");
-	}
 
 	@Test
-	public void carregarUsuario() {
+	void carregarUsuario() {
 		fail("ainda não implementado.");
 	}
 	
 	@Test
-	public void carregarUsuarioNaoEncontrado() {
+	void carregarUsuarioNaoEncontrado() {
+		Mockito.when(dao.findById(Mockito.anyLong())).thenReturn(null);
+		assertThrows(NotFoundException.class, () ->{
+			bo.load(userDto.getId());
+		});
+	}
+	
+	@Test
+	void deletar() {
+		fail("ainda não implementado.");
+	}
+	
+	@Test
+	void deletarClienteNaoExiste() {
 		fail("ainda não implementado.");
 	}
 }
