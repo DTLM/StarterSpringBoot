@@ -9,4 +9,5 @@ import com.adx.SpringBootInit.modal.Usuario;
 public interface IUsuarioDao extends JpaRepository<Usuario, Long>{
 
 	public Usuario findByEmail(String email);
+	public boolean exitsByEmail(String email);
 }

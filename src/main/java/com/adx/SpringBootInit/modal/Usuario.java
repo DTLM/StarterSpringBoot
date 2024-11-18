@@ -46,7 +46,6 @@ public class Usuario implements Serializable, UserDetails {
 	private String senha;
 	@Column(length = 100)
 	private String telefone;
-	@Enumerated(EnumType.ORDINAL)
 	@Column(nullable = false)
 	private RolesEnum role;
 	

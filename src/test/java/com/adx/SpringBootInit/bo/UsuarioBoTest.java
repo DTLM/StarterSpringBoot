@@ -1,41 +1,33 @@
 package com.adx.SpringBootInit.bo;
 
 
+import com.adx.SpringBootInit.bo.impl.UsuarioBo;
+import com.adx.SpringBootInit.dao.IUsuarioDao;
+import com.adx.SpringBootInit.enuns.RolesEnum;
+import com.adx.SpringBootInit.exception.SenhaIncorretaException;
+import com.adx.SpringBootInit.exception.UsuarioExistsException;
+import com.adx.SpringBootInit.exception.UsuarioNotFoundException;
+import com.adx.SpringBootInit.modal.Usuario;
+import com.adx.SpringBootInit.modal.dto.UsuarioDto;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import com.adx.SpringBootInit.bo.impl.UsuarioBo;
-import com.adx.SpringBootInit.dao.IUsuarioDao;
-import com.adx.SpringBootInit.enuns.RolesEnum;
-import com.adx.SpringBootInit.exception.NotFoundException;
-import com.adx.SpringBootInit.exception.SenhaIncorretaException;
-import com.adx.SpringBootInit.exception.UsuarioExistsException;
-import com.adx.SpringBootInit.exception.UsuarioNotFound;
-import com.adx.SpringBootInit.modal.Usuario;
-import com.adx.SpringBootInit.modal.dto.UsuarioDto;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(value = SpringExtension.class)
 @SpringBootTest
@@ -43,38 +35,40 @@ import com.adx.SpringBootInit.modal.dto.UsuarioDto;
 @ActiveProfiles(value = "teste")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UsuarioBoTest {
-	
+
 	@SpyBean
 	private UsuarioBo bo;
 	
 	@MockBean
 	private IUsuarioDao dao;
-	
+	@Autowired
+	private BCryptPasswordEncoder encoder;
 	private Usuario user;
 	private UsuarioDto userDto;
 	
 	@BeforeAll
 	public void setUp() {
-		user = Usuario.builder().email("teste@gmail.com").senha("123").nome("teste").telefone(null).role(RolesEnum.USUARIO).build();
-		userDto = UsuarioDto.builder().email("teste@gmail.com").senha("123").nome("teste").telefone(null).role(RolesEnum.USUARIO).build();
+		user = Usuario.builder().email("teste@gmail.com").senha("123").nome("teste").telefone(null).role(RolesEnum.USUARIO).id(1L).build();
+		userDto = UsuarioDto.builder().email("teste1@gmail.com").senha("123").nome("teste").telefone(null).role(RolesEnum.USUARIO).id(1L).build();
 	}
-	
+
 	@Test
 	@Order(1)
 	void createUser() throws UsuarioExistsException {
-		Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(null);
-		Mockito.when(dao.save(Mockito.any())).thenReturn(user);
+		when(dao.findByEmail(Mockito.anyString())).thenReturn(null);
+		when(dao.save(Mockito.any())).thenReturn(user);
 		
 		Usuario novo = bo.create(userDto);
 		
 		verify(dao,times(1)).findByEmail(Mockito.anyString());
+		verify(dao,times(1)).save(Mockito.any());
 		assertTrue(new ReflectionEquals(user).matches(novo));
 	}
 	
 	@Test
 	@Order(2)
 	void createEmailDuplicadoException() {
-		Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(user);
+		when(dao.findByEmail(Mockito.anyString())).thenReturn(user);
 		assertThrows(UsuarioExistsException.class, () -> {
 			bo.create(userDto);
 		});
@@ -91,14 +85,24 @@ class UsuarioBoTest {
 	}
 	
 	@Test
-	void editar() {
-		fail("ainda não implementado.");
+	void editar() throws SenhaIncorretaException, UsuarioNotFoundException, UsuarioExistsException {
+		user.setSenha("$2y$10$eaguTaM7wkTicJqr8go.M.Pnxj54lVlIFKXYcIFfkdhZ7CUxl8bF2");
+		when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(user));
+		when(dao.exitsByEmail(Mockito.anyString())).thenReturn(false);
+		when(dao.save(Mockito.any())).thenReturn(user);
+
+		Usuario result = bo.update(userDto);
+
+		assertNotNull(result);
+		verify(dao,times(1)).findById(Mockito.anyLong());
+		verify(dao,times(1)).exitsByEmail(Mockito.anyString());
+		verify(dao,times(1)).save(Mockito.any());
 	}
 	
 	@Test
 	void editarSenhaIncorreta() {
 		userDto.setSenha("4567");
-		Mockito.when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(user));
+		when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(user));
 		assertThrows(SenhaIncorretaException.class, () ->{
 			bo.update(userDto);
 		});
@@ -106,33 +110,57 @@ class UsuarioBoTest {
 	
 	@Test
 	void editarClienteNaoExiste() {
-		Mockito.when(dao.findById(Mockito.anyLong())).thenReturn(null);
-		assertThrows(UsuarioNotFound.class, () ->{
+		when(dao.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+		assertThrows(UsuarioNotFoundException.class, () ->{
 			bo.update(userDto);
 		});
 	}
-	
+	@Test
+	void editarClienteEmailExiste() {
+		user.setSenha("$2y$10$eaguTaM7wkTicJqr8go.M.Pnxj54lVlIFKXYcIFfkdhZ7CUxl8bF2");
+		when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(user));
+		when(dao.exitsByEmail(Mockito.anyString())).thenReturn(true);
+		userDto.setEmail("user2@gmail.com");
+		userDto.setSenha("123");
+
+		assertThrows(UsuarioExistsException.class, () ->{
+			bo.update(userDto);
+		});
+	}
+
 
 	@Test
-	void carregarUsuario() {
-		fail("ainda não implementado.");
+	void carregarUsuario() throws Exception {
+//		Arranjo
+		when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(user));
+//		teste
+		assertDoesNotThrow(() -> this.bo.load(userDto.getId()));
+		Usuario retorno = this.bo.load(userDto.getId());
+//		verificação
+		assertNotNull(retorno);
+		assertTrue(new ReflectionEquals(user).matches(retorno));
+		verify(dao,times(2)).findById(userDto.getId());
 	}
 	
 	@Test
 	void carregarUsuarioNaoEncontrado() {
-		Mockito.when(dao.findById(Mockito.anyLong())).thenReturn(null);
-		assertThrows(NotFoundException.class, () ->{
+		when(dao.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+		assertThrows(UsuarioNotFoundException.class, () ->{
 			bo.load(userDto.getId());
 		});
 	}
 	
 	@Test
-	void deletar() {
-		fail("ainda não implementado.");
+	void deletar() throws Exception {
+		doReturn(user).when(bo).load(Mockito.anyLong());
+		bo.deletar(user.getId());
+		verify(dao, times(1)).delete(user);
 	}
 	
 	@Test
 	void deletarClienteNaoExiste() {
-		fail("ainda não implementado.");
+		assertThrows(UsuarioNotFoundException.class, ()->{
+			bo.deletar(user.getId());
+		});
 	}
 }

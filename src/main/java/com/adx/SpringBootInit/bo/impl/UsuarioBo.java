@@ -1,29 +1,28 @@
 package com.adx.SpringBootInit.bo.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.adx.SpringBootInit.bo.IUsuarioBo;
+import com.adx.SpringBootInit.dao.IUsuarioDao;
+import com.adx.SpringBootInit.exception.EmptyDataException;
+import com.adx.SpringBootInit.exception.SenhaIncorretaException;
+import com.adx.SpringBootInit.exception.UsuarioExistsException;
+import com.adx.SpringBootInit.exception.UsuarioNotFoundException;
+import com.adx.SpringBootInit.modal.Usuario;
+import com.adx.SpringBootInit.modal.dto.UsuarioDto;
+import com.adx.SpringBootInit.util.GenericCrudServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.adx.SpringBootInit.bo.IUsuarioBo;
-import com.adx.SpringBootInit.dao.IUsuarioDao;
-import com.adx.SpringBootInit.exception.SenhaIncorretaException;
-import com.adx.SpringBootInit.exception.UsuarioExistsException;
-import com.adx.SpringBootInit.exception.UsuarioNotFound;
-import com.adx.SpringBootInit.modal.Usuario;
-import com.adx.SpringBootInit.modal.dto.UsuarioDto;
-import com.adx.SpringBootInit.util.GenericServiceImpl;
-
 @Service
-public class UsuarioBo extends GenericServiceImpl<Usuario> implements IUsuarioBo{
+@RequiredArgsConstructor
+public class UsuarioBo extends GenericCrudServiceImpl<Usuario> implements IUsuarioBo{
 	
-	private IUsuarioDao dao;
-	
+	private final IUsuarioDao dao;
 	private final BCryptPasswordEncoder encoder;
-	
-	@Autowired
-	public UsuarioBo(BCryptPasswordEncoder encoder, IUsuarioDao dao) {
-		this.dao = dao;
-		this.encoder = encoder;
+
+	@Override
+	protected IUsuarioDao getDao() {
+		return dao;
 	}
 
 	@Override
@@ -45,19 +44,22 @@ public class UsuarioBo extends GenericServiceImpl<Usuario> implements IUsuarioBo
 	}
 
 	@Override
-	public Usuario update(UsuarioDto usuario) throws SenhaIncorretaException, UsuarioNotFound {
-		Usuario usu = dao.findById(usuario.getId()).orElseThrow(UsuarioNotFound::new);
-		if(usu.getSenha().equalsIgnoreCase(encoder.encode(usuario.getSenha()))) {
-			if(!usuario.getNome().isBlank()) {
+	public Usuario update(UsuarioDto usuario) throws SenhaIncorretaException, UsuarioNotFoundException, UsuarioExistsException {
+		Usuario usu = dao.findById(usuario.getId()).orElseThrow(UsuarioNotFoundException::new);
+		if(usu != null && encoder.matches(usuario.getSenha(),usu.getSenha())) {
+			if(dao.exitsByEmail(usuario.getEmail()) && !usuario.getEmail().equals(usu.getEmail())){
+				throw new UsuarioExistsException("Usúario com o email: " + usuario.getEmail() +" já cadastrado");
+			}
+			if(usuario.getNome()!= null && !usuario.getNome().isBlank()) {
 				usu.setNome(usuario.getNome());
 			}
-			if(!usuario.getSenhaNova().isBlank()) {
+			if(usuario.getSenhaNova()!= null && !usuario.getSenhaNova().isBlank()) {
 				usu.setSenha(encoder.encode(usuario.getSenhaNova()));
 			}
 			if(usuario.getRole() != null) {
 				usu.setRole(usuario.getRole());
 			}
-			if(!usuario.getTelefone().isBlank()) {
+			if(usuario.getTelefone()!= null && !usuario.getTelefone().isBlank()) {
 				usu.setTelefone(usuario.getTelefone());
 			}
 			usu.setEmail(usuario.getEmail());

@@ -1,6 +1,8 @@
 package com.adx.SpringBootInit.util;
 
-public interface GenericService<T> {
+import java.io.Serializable;
+
+public interface GenericService<T extends Serializable> {
 
 	T create(final T entity)throws Exception;
 	
