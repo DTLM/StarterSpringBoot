@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UsuarioBo extends GenericCrudServiceImpl<Usuario> implements IUsuarioBo{
@@ -27,20 +30,21 @@ public class UsuarioBo extends GenericCrudServiceImpl<Usuario> implements IUsuar
 
 	@Override
 	public Usuario create(UsuarioDto usuario) throws UsuarioExistsException {
-		Usuario usu = dao.findByEmail(usuario.getEmail());
-		if(usu == null) {
-			usu = Usuario.builder()
+		Optional<Usuario> usu = dao.findByEmail(usuario.getEmail());
+		Usuario aux = null;
+		if(usu.isEmpty()) {
+			aux = Usuario.builder()
 					.nome(usuario.getNome())
 					.email(usuario.getEmail())
 					.senha(encoder.encode(usuario.getSenha()))
 					.telefone(usuario.getTelefone())
 					.role(usuario.getRole())
 					.build();
-			usu = dao.save(usu);
+			aux = dao.save(aux);
 		} else {
 			throw new UsuarioExistsException("Usúario com o email: " + usuario.getEmail() +" já cadastrado");
 		}
-		return usu;
+		return aux;
 	}
 
 	@Override
@@ -68,6 +72,15 @@ public class UsuarioBo extends GenericCrudServiceImpl<Usuario> implements IUsuar
 			throw new SenhaIncorretaException();
 		}
 		return usu;
+	}
+
+	@Override
+	public Usuario findByEmail(String email) throws UsuarioNotFoundException {
+		Optional<Usuario> user =  dao.findByEmail(email);
+		if(user.isEmpty()){
+			throw new UsuarioNotFoundException();
+		}
+		return user.get();
 	}
 
 }

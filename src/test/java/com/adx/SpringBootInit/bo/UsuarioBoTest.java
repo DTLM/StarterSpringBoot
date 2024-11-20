@@ -55,7 +55,7 @@ class UsuarioBoTest {
 	@Test
 	@Order(1)
 	void createUser() throws UsuarioExistsException {
-		when(dao.findByEmail(Mockito.anyString())).thenReturn(null);
+		when(dao.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 		when(dao.save(Mockito.any())).thenReturn(user);
 		
 		Usuario novo = bo.create(userDto);
@@ -68,7 +68,7 @@ class UsuarioBoTest {
 	@Test
 	@Order(2)
 	void createEmailDuplicadoException() {
-		when(dao.findByEmail(Mockito.anyString())).thenReturn(user);
+		when(dao.findByEmail(Mockito.anyString())).thenReturn(Optional.ofNullable(user));
 		assertThrows(UsuarioExistsException.class, () -> {
 			bo.create(userDto);
 		});

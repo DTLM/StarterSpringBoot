@@ -13,4 +13,6 @@ public interface IUsuarioBo extends GenericService<Usuario>{
 	Usuario create(UsuarioDto usuario) throws UsuarioExistsException;
 	
 	Usuario update(UsuarioDto usuario) throws SenhaIncorretaException, UsuarioNotFoundException, UsuarioExistsException;
+
+	Usuario findByEmail(String email) throws UsuarioNotFoundException;
 }

@@ -5,9 +5,11 @@ import org.springframework.stereotype.Repository;
 
 import com.adx.SpringBootInit.modal.Usuario;
 
+import java.util.Optional;
+
 @Repository
 public interface IUsuarioDao extends JpaRepository<Usuario, Long>{
 
-	public Usuario findByEmail(String email);
-	public boolean exitsByEmail(String email);
+	Optional<Usuario> findByEmail(String email);
+	boolean exitsByEmail(String email);
 }
