@@ -6,13 +6,15 @@ import com.adx.SpringBootInit.exception.UsuarioExistsException;
 import com.adx.SpringBootInit.exception.UsuarioNotFoundException;
 import com.adx.SpringBootInit.modal.Usuario;
 import com.adx.SpringBootInit.modal.dto.UsuarioDto;
+import com.adx.SpringBootInit.modal.dto.UsuarioResponse;
 import com.adx.SpringBootInit.util.GenericService;
 
 public interface IUsuarioBo extends GenericService<Usuario>{
 
-	Usuario create(UsuarioDto usuario) throws UsuarioExistsException;
+	UsuarioResponse create(UsuarioDto usuario) throws UsuarioExistsException;
 	
-	Usuario update(UsuarioDto usuario) throws SenhaIncorretaException, UsuarioNotFoundException, UsuarioExistsException;
+	UsuarioResponse update(UsuarioDto usuario) throws SenhaIncorretaException, UsuarioNotFoundException, UsuarioExistsException;
 
 	Usuario findByEmail(String email) throws UsuarioNotFoundException;
+
 }

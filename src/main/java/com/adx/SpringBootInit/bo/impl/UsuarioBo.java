@@ -2,18 +2,17 @@ package com.adx.SpringBootInit.bo.impl;
 
 import com.adx.SpringBootInit.bo.IUsuarioBo;
 import com.adx.SpringBootInit.dao.IUsuarioDao;
-import com.adx.SpringBootInit.exception.EmptyDataException;
 import com.adx.SpringBootInit.exception.SenhaIncorretaException;
 import com.adx.SpringBootInit.exception.UsuarioExistsException;
 import com.adx.SpringBootInit.exception.UsuarioNotFoundException;
 import com.adx.SpringBootInit.modal.Usuario;
 import com.adx.SpringBootInit.modal.dto.UsuarioDto;
+import com.adx.SpringBootInit.modal.dto.UsuarioResponse;
 import com.adx.SpringBootInit.util.GenericCrudServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -29,7 +28,7 @@ public class UsuarioBo extends GenericCrudServiceImpl<Usuario> implements IUsuar
 	}
 
 	@Override
-	public Usuario create(UsuarioDto usuario) throws UsuarioExistsException {
+	public UsuarioResponse create(UsuarioDto usuario) throws UsuarioExistsException {
 		Optional<Usuario> usu = dao.findByEmail(usuario.getEmail());
 		Usuario aux = null;
 		if(usu.isEmpty()) {
@@ -44,11 +43,11 @@ public class UsuarioBo extends GenericCrudServiceImpl<Usuario> implements IUsuar
 		} else {
 			throw new UsuarioExistsException("Usúario com o email: " + usuario.getEmail() +" já cadastrado");
 		}
-		return aux;
+		return UsuarioResponse.builder().email(aux.getEmail()).id(aux.getId()).build();
 	}
 
 	@Override
-	public Usuario update(UsuarioDto usuario) throws SenhaIncorretaException, UsuarioNotFoundException, UsuarioExistsException {
+	public UsuarioResponse update(UsuarioDto usuario) throws SenhaIncorretaException, UsuarioNotFoundException, UsuarioExistsException {
 		Usuario usu = dao.findById(usuario.getId()).orElseThrow(UsuarioNotFoundException::new);
 		if(usu != null && encoder.matches(usuario.getSenha(),usu.getSenha())) {
 			if(dao.exitsByEmail(usuario.getEmail()) && !usuario.getEmail().equals(usu.getEmail())){
@@ -71,7 +70,7 @@ public class UsuarioBo extends GenericCrudServiceImpl<Usuario> implements IUsuar
 		} else {
 			throw new SenhaIncorretaException();
 		}
-		return usu;
+		return UsuarioResponse.builder().email(usu.getEmail()).id(usu.getId()).build();
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
 @OpenAPIDefinition(
 		info = @Info(
 				title = "Spring starter",
@@ -13,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 				description = "Programa base para desenvolvimento com spring boot, data jpa, security e swagger"
 		)
 )
+@SpringBootApplication(scanBasePackages = "com.adx.SpringBootInit")
 public class SpringBootInitApplication {
 
 	public static void main(String[] args) {
@@ -20,3 +20,4 @@ public class SpringBootInitApplication {
 	}
 
 }
+

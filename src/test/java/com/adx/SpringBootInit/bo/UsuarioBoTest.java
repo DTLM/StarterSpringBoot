@@ -9,6 +9,7 @@ import com.adx.SpringBootInit.exception.UsuarioExistsException;
 import com.adx.SpringBootInit.exception.UsuarioNotFoundException;
 import com.adx.SpringBootInit.modal.Usuario;
 import com.adx.SpringBootInit.modal.dto.UsuarioDto;
+import com.adx.SpringBootInit.modal.dto.UsuarioResponse;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,11 +59,10 @@ class UsuarioBoTest {
 		when(dao.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 		when(dao.save(Mockito.any())).thenReturn(user);
 		
-		Usuario novo = bo.create(userDto);
+		UsuarioResponse novo = bo.create(userDto);
 		
 		verify(dao,times(1)).findByEmail(Mockito.anyString());
 		verify(dao,times(1)).save(Mockito.any());
-		assertTrue(new ReflectionEquals(user).matches(novo));
 	}
 	
 	@Test
@@ -81,6 +81,9 @@ class UsuarioBoTest {
 	@Test
 	@Order(3)
 	void createNaoLancaExcecao() {
+		when(dao.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+		when(dao.save(Mockito.any())).thenReturn(user);
+
 		assertDoesNotThrow(() -> bo.create(userDto));
 	}
 	
@@ -91,7 +94,7 @@ class UsuarioBoTest {
 		when(dao.exitsByEmail(Mockito.anyString())).thenReturn(false);
 		when(dao.save(Mockito.any())).thenReturn(user);
 
-		Usuario result = bo.update(userDto);
+		UsuarioResponse result = bo.update(userDto);
 
 		assertNotNull(result);
 		verify(dao,times(1)).findById(Mockito.anyLong());

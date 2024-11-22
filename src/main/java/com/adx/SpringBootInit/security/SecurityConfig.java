@@ -25,7 +25,7 @@ public class SecurityConfig {
     public static final String SECURITY = "bearerAuth";
     private static final String[] swaggerPaths = {
             "/v3/api-docs/**",
-            "/swagger-ui/index.html",
+            "/swagger-ui.html",
             "/v2/api-docs/**",
             "/swagger-resources/**"
     };
@@ -36,8 +36,10 @@ public class SecurityConfig {
                 csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(autorize -> autorize
                         .requestMatchers("/usuario/**").hasAnyRole("Administrador","Usúario")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/authenticate/**").hasAnyRole("Administrador","Usúario")
+                        .requestMatchers("/authenticate/login").permitAll()
                         .requestMatchers(swaggerPaths).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

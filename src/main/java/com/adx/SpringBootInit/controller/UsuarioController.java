@@ -1,6 +1,11 @@
 package com.adx.SpringBootInit.controller;
 
 import com.adx.SpringBootInit.bo.IUsuarioBo;
+import com.adx.SpringBootInit.exception.SenhaIncorretaException;
+import com.adx.SpringBootInit.exception.UsuarioNotFoundException;
+import com.adx.SpringBootInit.modal.dto.Error;
+import com.adx.SpringBootInit.modal.dto.UsuarioDto;
+import com.adx.SpringBootInit.modal.dto.UsuarioResponse;
 import com.adx.SpringBootInit.security.SecurityConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,10 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/usuario")
@@ -23,10 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsuarioController {
 
 	private final IUsuarioBo service;
-
-	// criar login (gerar token)
-
-	// criar deslogar (eliminar security context holder
 
 	@GetMapping("teste")
 	@Operation(summary = "retorna hello", description = "retorna ola mundo em string.", method = "GET")
