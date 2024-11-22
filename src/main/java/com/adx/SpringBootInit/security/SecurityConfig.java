@@ -25,7 +25,7 @@ public class SecurityConfig {
     public static final String SECURITY = "bearerAuth";
     private static final String[] swaggerPaths = {
             "/v3/api-docs/**",
-            "/swagger-ui.html",
+            "/swagger-ui/index.html",
             "/v2/api-docs/**",
             "/swagger-resources/**"
     };

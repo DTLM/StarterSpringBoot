@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface IUsuarioDao extends JpaRepository<Usuario, Long>{
 
 	Optional<Usuario> findByEmail(String email);
-	boolean exitsByEmail(String email);
+	
+	boolean existsByEmail(String email);
 }

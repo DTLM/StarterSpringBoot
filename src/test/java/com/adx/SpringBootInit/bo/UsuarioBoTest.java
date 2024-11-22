@@ -91,14 +91,14 @@ class UsuarioBoTest {
 	void editar() throws SenhaIncorretaException, UsuarioNotFoundException, UsuarioExistsException {
 		user.setSenha("$2y$10$eaguTaM7wkTicJqr8go.M.Pnxj54lVlIFKXYcIFfkdhZ7CUxl8bF2");
 		when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(user));
-		when(dao.exitsByEmail(Mockito.anyString())).thenReturn(false);
+		when(dao.existsByEmail(Mockito.anyString())).thenReturn(false);
 		when(dao.save(Mockito.any())).thenReturn(user);
 
 		UsuarioResponse result = bo.update(userDto);
 
 		assertNotNull(result);
 		verify(dao,times(1)).findById(Mockito.anyLong());
-		verify(dao,times(1)).exitsByEmail(Mockito.anyString());
+		verify(dao,times(1)).existsByEmail(Mockito.anyString());
 		verify(dao,times(1)).save(Mockito.any());
 	}
 	
@@ -122,7 +122,7 @@ class UsuarioBoTest {
 	void editarClienteEmailExiste() {
 		user.setSenha("$2y$10$eaguTaM7wkTicJqr8go.M.Pnxj54lVlIFKXYcIFfkdhZ7CUxl8bF2");
 		when(dao.findById(Mockito.anyLong())).thenReturn(Optional.of(user));
-		when(dao.exitsByEmail(Mockito.anyString())).thenReturn(true);
+		when(dao.existsByEmail(Mockito.anyString())).thenReturn(true);
 		userDto.setEmail("user2@gmail.com");
 		userDto.setSenha("123");
 

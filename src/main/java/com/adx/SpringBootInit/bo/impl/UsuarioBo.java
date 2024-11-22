@@ -50,7 +50,7 @@ public class UsuarioBo extends GenericCrudServiceImpl<Usuario> implements IUsuar
 	public UsuarioResponse update(UsuarioDto usuario) throws SenhaIncorretaException, UsuarioNotFoundException, UsuarioExistsException {
 		Usuario usu = dao.findById(usuario.getId()).orElseThrow(UsuarioNotFoundException::new);
 		if(usu != null && encoder.matches(usuario.getSenha(),usu.getSenha())) {
-			if(dao.exitsByEmail(usuario.getEmail()) && !usuario.getEmail().equals(usu.getEmail())){
+			if(dao.existsByEmail(usuario.getEmail()) && !usuario.getEmail().equals(usu.getEmail())){
 				throw new UsuarioExistsException("Usúario com o email: " + usuario.getEmail() +" já cadastrado");
 			}
 			if(usuario.getNome()!= null && !usuario.getNome().isBlank()) {
