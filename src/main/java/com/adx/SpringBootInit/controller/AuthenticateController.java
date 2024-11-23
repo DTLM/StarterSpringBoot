@@ -6,11 +6,13 @@ import com.adx.SpringBootInit.exception.UsuarioNotFoundException;
 import com.adx.SpringBootInit.modal.dto.Error;
 import com.adx.SpringBootInit.modal.dto.UsuarioDto;
 import com.adx.SpringBootInit.modal.dto.UsuarioResponse;
+import com.adx.SpringBootInit.security.SecurityConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/authenticate")
 @Tag(name = "Authenticação", description = "Classe de login e logout")
 @RequiredArgsConstructor
+@SecurityRequirement(name = SecurityConfig.SECURITY)
 public class AuthenticateController {
 
     private final IAuthenticationBo authenticationBo;
