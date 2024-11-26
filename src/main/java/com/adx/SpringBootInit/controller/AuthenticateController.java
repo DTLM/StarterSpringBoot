@@ -14,9 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +35,7 @@ public class AuthenticateController {
     private final IAuthenticationBo authenticationBo;
 
     @PostMapping("/login")
-    @Operation(summary = "realização de login do usuário, onde receberá o token de acesso.",description = "endpoint de login e aquisição do token JWT", method = "POST")
+    @Operation(summary = "Login do usuário.",description = "Endpoint de login e aquisição do token JWT", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponse.class))),
             @ApiResponse(responseCode = "400", description = "Senha incorreta.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))),
@@ -49,5 +52,16 @@ public class AuthenticateController {
         }catch (Exception e){
             return new ResponseEntity<>(Error.builder().error(e.getMessage()).build(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Operation(summary = "Logout", description = "Finaliza a sessão do usuário.", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logout realizado com sucesso."),
+            @ApiResponse(responseCode = "401", description = "Usuário não autenticado.")
+    })
+    @PostMapping("/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        // Delega para o mecanismo padrão de logout do Spring Security
+        new SecurityContextLogoutHandler().logout(request, response, null);
     }
 }
