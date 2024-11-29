@@ -1,4 +1,4 @@
-package com.thiago.SpringBootInit.dao;
+package com.thiago.SpringBootInit.repository;
 
 import com.thiago.SpringBootInit.modal.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;

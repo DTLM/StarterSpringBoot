@@ -1,7 +1,7 @@
-package com.thiago.SpringBootInit.bo.impl;
+package com.thiago.SpringBootInit.service.impl;
 
-import com.thiago.SpringBootInit.bo.IAuthenticationBo;
-import com.thiago.SpringBootInit.bo.IUsuarioBo;
+import com.thiago.SpringBootInit.service.IAuthenticationBo;
+import com.thiago.SpringBootInit.service.IUsuarioBo;
 import com.thiago.SpringBootInit.exception.SenhaIncorretaException;
 import com.thiago.SpringBootInit.exception.UsuarioNotFoundException;
 import com.thiago.SpringBootInit.modal.Usuario;

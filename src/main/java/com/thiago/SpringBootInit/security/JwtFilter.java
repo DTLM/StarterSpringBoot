@@ -1,7 +1,7 @@
 package com.thiago.SpringBootInit.security;
 
-import com.thiago.SpringBootInit.bo.IJwtBo;
-import com.thiago.SpringBootInit.bo.IUsuarioBo;
+import com.thiago.SpringBootInit.service.IJwtBo;
+import com.thiago.SpringBootInit.service.IUsuarioBo;
 import com.thiago.SpringBootInit.exception.UsuarioNotFoundException;
 import com.thiago.SpringBootInit.modal.Usuario;
 import jakarta.servlet.FilterChain;

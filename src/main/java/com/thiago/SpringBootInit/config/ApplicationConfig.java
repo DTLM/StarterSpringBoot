@@ -1,6 +1,6 @@
 package com.thiago.SpringBootInit.config;
 
-import com.thiago.SpringBootInit.dao.IUsuarioDao;
+import com.thiago.SpringBootInit.repository.IUsuarioDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

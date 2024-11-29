@@ -1,6 +1,6 @@
 package com.thiago.SpringBootInit.controller;
 
-import com.thiago.SpringBootInit.bo.IAuthenticationBo;
+import com.thiago.SpringBootInit.service.IAuthenticationBo;
 import com.thiago.SpringBootInit.exception.SenhaIncorretaException;
 import com.thiago.SpringBootInit.exception.UsuarioNotFoundException;
 import com.thiago.SpringBootInit.modal.dto.Error;

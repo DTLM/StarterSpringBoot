@@ -1,6 +1,6 @@
-package com.thiago.SpringBootInit.bo.impl;
+package com.thiago.SpringBootInit.service.impl;
 
-import com.thiago.SpringBootInit.bo.IJwtBo;
+import com.thiago.SpringBootInit.service.IJwtBo;
 import com.thiago.SpringBootInit.modal.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

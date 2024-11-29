@@ -1,4 +1,4 @@
-package com.thiago.SpringBootInit.bo;
+package com.thiago.SpringBootInit.service;
 
 import com.thiago.SpringBootInit.exception.SenhaIncorretaException;
 import com.thiago.SpringBootInit.exception.UsuarioNotFoundException;

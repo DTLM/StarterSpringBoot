@@ -1,4 +1,4 @@
-package com.thiago.SpringBootInit.dao;
+package com.thiago.SpringBootInit.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;

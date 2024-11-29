@@ -1,8 +1,8 @@
-package com.thiago.SpringBootInit.bo;
+package com.thiago.SpringBootInit.service;
 
 
-import com.thiago.SpringBootInit.bo.impl.UsuarioBo;
-import com.thiago.SpringBootInit.dao.IUsuarioDao;
+import com.thiago.SpringBootInit.service.impl.UsuarioBo;
+import com.thiago.SpringBootInit.repository.IUsuarioDao;
 import com.thiago.SpringBootInit.enuns.RolesEnum;
 import com.thiago.SpringBootInit.exception.SenhaIncorretaException;
 import com.thiago.SpringBootInit.exception.UsuarioExistsException;

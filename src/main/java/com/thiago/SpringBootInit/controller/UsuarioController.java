@@ -1,6 +1,6 @@
 package com.thiago.SpringBootInit.controller;
 
-import com.thiago.SpringBootInit.bo.IUsuarioBo;
+import com.thiago.SpringBootInit.service.IUsuarioBo;
 import com.thiago.SpringBootInit.security.SecurityConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

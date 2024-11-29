@@ -1,4 +1,4 @@
-package com.thiago.SpringBootInit.bo;
+package com.thiago.SpringBootInit.service;
 
 import com.thiago.SpringBootInit.modal.Usuario;
 import org.springframework.security.core.userdetails.UserDetails;
